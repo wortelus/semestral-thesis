@@ -1,0 +1,21 @@
+\section{YOLOv11}
+\label{sec:Chapter21}
+\textbf{YOLOv11} (ang. You Only Look Once, verze 11) představuje jeden z posledních vývojových stupňů v řadě modelů pro úlohy počítačového vidění. Jedná se o vylepšení předcházející populární verze YOLOv8. Modely rodiny hlubokých konvolučních neuronových sítí YOLO přistupují k detekci objektů jako k regresnímu problému -- tedy predikují jak třídu objektu, tak jeho pozici (bounding box) v rámci jediné dopředné propagace skrz síť. To umožňuje velmi rychlé a zároveň přesné zpracování obrazu v reálném čase. 
+
+YOLOv11 však není omezeno pouze na klasickou detekci objektů. Díky své modulární architektuře podporuje také segmentaci, detekci orientovaných objektů (Oriented Bounding Boxes), klasifikaci snímků a zejména \textit{pose estimation} -- tedy odhad pozic klíčových bodů na objektu, což je přímo relevantní pro úlohu určování polohy objektu pomocí PnP algoritmu. Architektura YOLOv11, podobně jako předešlé verze, je tvořena třemi základními komponentami:
+\begin{itemize}
+    \item \textbf{Páteřní síť} -- slouží jako primární extraktor rysů z obrazu. Pomocí konvolučních vrstev převádí vstupní obraz na vícerozměrné mapy rysů v několika rozměrových měřítkách.
+    
+    \item \textbf{Krk} -- představuje mezistupeň, který agreguje rysy z různých hloubek sítě (tedy různých úrovní rozlišení) pomocí operací typu upsampling a concatenace. YOLOv11 dále zavádí prostorový mechanismus pozornosti (C2PSA), který umožňuje modelu zaměřit se na klíčové části obrazu – to je výhodné například při detekci částečně překrytých nebo malých objektů.
+    
+    \item \textbf{Hlava} -- zodpovídá za finální predikci výstupů. Na základě zpracovaných map rysů predikuje souřadnice ohraničujících boxů, skóre přítomnosti objektu a pravděpodobnosti tříd. V případě varianty YOLOv11-Pose navíc model predikuje také souřadnice klíčových bodů na objektu, které lze dále využít např. pro řešení úlohy PnP.
+\end{itemize}
+
+\clearpage
+Mezi hlavní změny v architektuře této verze detektoru YOLO patří:
+
+\begin{itemize}
+    \item \textbf{C3k2 bloky} -- nová varianta tzv. Cross Stage Partial bloků s menší konvolučním jádrem, která zlepšuje extrakci jemných detailů při nižší výpočetní náročnosti. Nahrazuje C3k bloky z předchozích iterací modelů za tuto rychlejší verzi, kde se nahrazuje větší konvoluční kernel za 2 menší (viděny ve verzi 8), což zlepšuje výkon.
+    \item \textbf{SPPF (Spatial Pyramid Pooling – Fast)} -- rychlejší varianta klasického SPP, umožňující agregaci vícerozměrných kontextových informací.
+    \item \textbf{C2PSA (Convolutional block with Parallel Spatial Attention)} -- paralelní mechanismus prostorové pozornosti, který pomáhá lépe zachytit důležité lokální i globální rysy v obraze \cite{yolov11}. 
+\end{itemize}

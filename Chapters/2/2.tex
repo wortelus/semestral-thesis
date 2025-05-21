@@ -1,0 +1,37 @@
+\section{Perspektivní problém n bodů}
+\label{sec:Chapter22}
+Problém perspektivního problému n bodů lze definovat jako odhad polohy objektu vůči kameře. Cílem je určit 6 stupňů volnosti -- tři pro rotaci a tři pro translaci -- které řeší problém nalezení takové rotace a translace, která minimalizuje reprojekční chybu mezi odpovídajícími si 3D body a jejich 2D projekcemi. Pro řešení PnP problému musíme znát klíčové body známého objektu v 3D souřadném systému objektu a také kalibrační parametry kamery, zejména tedy ohniskovou vzdálenost $f$. Základní forma transformace ze světového souřadného systému do projekční roviny může být definována následovně:
+\begin{equation}
+\begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{A} \Pi^0 \mathbf{T}_w \begin{bmatrix} X_w \\ Y_w \\ Z_w \\ 1 \end{bmatrix},
+\end{equation}
+resp.
+\begin{equation}
+    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \end{bmatrix} \begin{bmatrix} r_{11} & r_{12} & r_{13} & t_x \\ r_{21} & r_{22} & r_{23} & t_y \\ r_{31} & r_{32} & r_{33} & t_z \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} X_w \\ Y_w \\ Z_w \\ 1 \end{bmatrix},
+\end{equation}
+kde $A$ definuje matici kamery -- parametry $f$ definují ohniskovou vzdálenost a $c$ střed snímku. Rotační 3$\times$3 parametry $r$ a translační vektory $t$ matice $T_w$ transformují souřadnice ze světového souřadného systému do souřadného systému kamery, podrobněji znázorněno následovně:
+\begin{equation}
+    \begin{bmatrix} X_c \\ Y_c \\ Z_c \\ 1 \end{bmatrix} = \begin{bmatrix} r_{11} & r_{12} & r_{13} & t_x \\ r_{21} & r_{22} & r_{23} & t_y \\ r_{31} & r_{32} & r_{33} & t_z \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} X_w \\ Y_w \\ Z_w \\ 1 \end{bmatrix}
+\end{equation}
+Vstupem algoritmu pro řešení jsou tedy známé 3D souřadnice bodů objektu, jejich odpovídající 2D projekce na snímku a vnitřní matice kamery, zatímco výstupem je aproximace transformační matice $T_w$, také často definované i v její rozložené formě jako $tvec$ a $rvec$ \cite{opencv_solvepnp}.
+\subsection{Metody řešení}
+Metod pro řešení perspektivního problému n bodů je hned několik. Jednou z nejjednodušších a nejstarších metod může být \textbf{P3P}. Metoda P3P dokazuje, že 3 přesné odhady a korespondence klíčových bodů jsou dostatečné k odhadu pózy objektu vůči kameře. Přístupů P3P existuje několik, nejstarší metoda se dá vystopovat až do roku 1841. Metody P3P jsou primárně založeny na soustavě rovnic a úhlech mezi projekčními paprsky a známými vzdálenostmi mezi body 3D objektu. Bohužel metody P3P jsou citlivé na odlehlé hodnoty ve vstupních projekcích. Také produkují až 4 možná řešení, avšak čtvrtý bod může být použit k odstranění nejasnosti \cite{shrestha2019pnp}.
+
+Dalším významným přístupem k řešení PnP problému, na který se dále v této práci zaměříme, jsou \textbf{iterativní metody}, jako je ta implementovaná v knihovně OpenCV pod příznakem \texttt{cv.SOLVEPNP\_ITERATIVE}. Tento přístup funguje jako zpřesnění pózy pomocí nelineární minimalizace nejmenších čtverců reprojekční chyby, konkrétně s využitím Levenberg-Marquardtova algoritmu. Tento algoritmus je iterativní a kombinuje dva přístupy:
+\begin{enumerate}
+    \item \textbf{Gradientní sestup} -- Pokud je aktuální odhad parametrů pózy (rotace a translace) daleko od optimálního řešení (což se projeví vysokou reprojekční chybou), Levenberg-Marquardtův algoritmus se chová podobně jako metoda největšího spádu. Toho dosahuje zvýšením tlumicího faktoru $\lambda$, což vede k menším, opatrnějším krokům ve směru nejstrmějšího poklesu reprojekční chyby.
+    \item \textbf{Gauss-Newtonův algoritmus} -- Pokud je aktuální odhad parametrů pózy blízko optimálního řešení, Levenberg-Marquardtův algoritmus se chová podobně jako Gaussova-Newtonova metoda. Snížením tlumicího faktoru $\lambda$ algoritmus využívá aproximaci problému k výpočtu větších a rychlejších kroků směřujících k minimu reprojekční chyby, což umožňuje rychlou konvergenci.
+\end{enumerate}
+Levenberg-Marquardtův algoritmus mezi těmito dvěma chováními dynamicky přechází úpravou tlumicího faktoru $\lambda$ na základě úspěšnosti předchozí iterace, počet iterací je dán jako hyperparametr funkce \cite{pnpransaclmalg}.
+
+\subsection{RANSAC}
+\textbf{RANSAC} (ang. \textbf{RAN}dom \textbf{SA}mple \textbf{C}onsensus, česky "náhodný výběr s konsenzem") -- je iterativní algoritmus určený k aproximaci parametrů matematického modelu z datové sady, která obsahuje potenciálně nezanedbatelný podíl odlehlých hodnot. Jeho využití spočívá v iterativním nalezení nejlepší aproximace modelu pomocí vybraných minimálních podmnožin dat a následném vyhodnocení kvality každého takto vzniklého modelu na celé datové sadě.
+
+Prvním krokem iterace je náhodný výběr podmnožiny bodů z našich dat. V kontextu metody RANSAC je to právě ta nejmenší velikost podmnožiny k úspěšnému řešení modelu, jelikož s klesajícím počtem datových bodů bude intuitivně růst pravděpodobnost, že náhodně vybraná podmnožina bude obsahovat výhradně vnitřní pozorování. Pokud se tak stane, model odvozený z této \enquote{čisté} podmnožiny bude dobrým kandidátem na skutečný model. RANSAC tento proces provede iterativně:
+
+\begin{enumerate}
+\item Náhodně vybere minimální počet bodů potřebných k odhadu modelu.
+\item Z této sady odhadne parametry modelu.
+\item Ověří, kolik všech bodů v původní datové sadě tomuto modelu odpovídá s určitou tolerancí.
+\end{enumerate}
+
+Po mnoha takových iteracích je za nejlepší odhad modelu prohlášen ten model, který byl podpořen největším počtem vnitřních pozorování. Odlehlé hodnoty, které žádnému z úspěšných modelů neodpovídají, jsou tímto způsobem efektivně ignorovány. V kontextu PnP problému se RANSAC používá k robustnímu nalezení transformační matice $T_w$ i v přítomnosti chybných korespondencí klíčových bodů \cite{pnpransaclmalg}.
