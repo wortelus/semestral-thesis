@@ -7,6 +7,8 @@
 \usepackage{subfig} % makra pro "podobrazky" a "podtabulky"
 \usepackage[cpp]{diplomalst}
 \usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{siunitx}
 
 % Zadame pozadovane vstupy pro generovani titulnich stran.
 \ThesisAuthor{Bc. Daniel Slavík}
@@ -32,9 +34,13 @@
 
 % \EnglishKeywords{typography; \LaTeX; master thesis}
 
-\AddAcronym{PnP}{Perspektivní problém n bodů}
-\AddAcronym{YOLO}{You Only Look Once}
-\AddAcronym{RANSAC}{Random Sample Consensus}
+\AddAcronym{DNN}{Hluboká neuronová síť, Deep Neural Network}
+\AddAcronym{PnP}{Perspektivní problém $n$ bodů, Perspective-n-Point}
+\AddAcronym{YOLO}{Podíváš se pouze jednou, You Only Look Once}
+\AddAcronym{RANSAC}{Náhodný výběr s konsenzem, Random Sample Consensus}
+\AddAcronym{VRAM}{Video paměť, Video Random Access Memory}
+\AddAcronym{OKS}{Podobnost klíčových bodů, Object Keypoint Similarity}
+\AddAcronym{mAP}{Průměrná přesnost, Mean Average Precision}
 
 \addbibresource{biblatex.bib}
 
@@ -65,6 +71,13 @@
 \input{Chapters/2/2}
 \input{Chapters/3/index}
 \input{Chapters/4/index}
+\input{Chapters/4/1}
+\input{Chapters/4/2}
+\input{Chapters/4/3}
+\input{Chapters/5/index}
+\input{Chapters/5/1}
+\input{Chapters/5/2}
+\input{Chapters/6/index}
 
 % Seznam literatury
 \printbibliography[title={Literatura}, heading=bibintoc]

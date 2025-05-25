@@ -1,2 +1,3 @@
 \chapter{Návrh řešení}
 \label{sec:Chapter4}
+Pro řešení lokalizace klíčových bodů a jejich korespondenci s 3D klíčovými body jsem se rozhodl využít model YOLOv11. Důvodem byla jeho přímá návaznost na populární verzi YOLOv8 a fakt, že YOLOv11 dle oficiální dokumentace nabízí rychlejší a přesnější inferenci, zejména v režimu odhadu pózy na COCO datasetu, což je pro naši úlohu relevantní \cite{ultralytics_yolov8_vs_yolo11}. Klíčové body datasetu jsou definovány bodovými souřadnicemi v kartézském souřadném systému. Ohraničující boxy lze k našim datům snadno vygenerovat, jelikož pozadí je na snímcích vykresleného modelu LEGO auta definováno nulovým alfa kanálem.
