@@ -1,6 +1,6 @@
 \chapter{Dataset}
 \label{sec:Chapter3}
-Dataset pro tuto práci je tvořen kompozitními snímky, které jsou tvořeny pozadími vyfocenými kamerou StereoLabs ZED 2 a synteticky vykresleným modelem auta. Pro tvorbu kompozitů, augmentaci dat a transformaci augmentovaných pozic klíčových bodů/ohraničujících boxů byla využita knihovna \texttt{albumenations} v rámci jazyka Python 3. 
+Dataset pro tuto práci je vygenerován synteticky, pozadí jsou focena kamerou StereoLabs ZED 2 a popředí synteticky vykresleným modelem auta LEGO Hot Rod 42022. Pro tvorbu syntetického datasetu, augmentaci dat a transformaci augmentovaných pozic klíčových bodů/ohraničujících boxů byla využita knihovna \texttt{albumenations} v rámci jazyka Python 3. 
 
 V rámci několika světelných nastavení bylo nafoceno v auto-kalibračním režimu kamery pozadí pro generování dat ve formátu PNG s následujícími parametry: \texttt{1920$\times$1080, 8-bit/color RGB, non-interlaced}. Nutno podotknout, že při reálném použití by v daný moment platné parametry kamery sloužily ke generování dvou vstupů do funkce \texttt{solvePnP}, a to matice kamery a parametru \texttt{distCoeffs} do funkce:
 \begin{itemize}
@@ -69,6 +69,6 @@ Normály společně s těmito metadaty nám v tomto kontextu mohou posloužit ja
 \begin{figure}[hb]
 \centering
 \includegraphics[width=0.4\textwidth,keepaspectratio]{Figures/train_EA408_199.png}
-\caption{Příklad kompozitního snímku z datasetu}
+\caption{Příklad snímku ze syntetického datasetu}
 \label{fig:trainimg}
 \end{figure}

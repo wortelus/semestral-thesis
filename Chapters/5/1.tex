@@ -9,7 +9,7 @@ Trénink modelu YOLO byl na základě prvotních experimentů nastaven na 45 epo
 \label{fig:yoloresults}
 \end{figure}
 
-Z obrázku \ref{fig:yoloresults} je patrné, že metriky pro lokalizaci klíčových bodů se stále inkrementálně zlepšovaly. Bohužel, v rámci této práce se nepovedlo navrátit stav optimalizátoru a plánovače rychlosti učení do stavu, kdy by mohl trénink efektivně a spolehlivě pokračovat.
+Z obrázku \ref{fig:yoloresults} je patrné, že metriky pro lokalizaci klíčových bodů se stále inkrementálně zlepšovaly. Bohužel, v rámci této práce se po dosažení přednastavené hodnoty trénovaných epoch nepovedlo navrátit stav optimalizátoru a plánovače rychlosti učení do stavu, kdy by mohl trénink efektivně a spolehlivě pokračovat.
 
 V rámci evaluace lokalizace byl parametr $\sigma$ pro metriku OKS nastaven na $\sigma=0,05$. Volba hodnoty je v rozsahu hodnot $\sigma$ z dat pro odhad lidské pózy COCO \cite{dutta2023oks}. Výsledky na základě testovací množiny jsou následující:
 
